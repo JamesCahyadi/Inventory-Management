@@ -1,4 +1,4 @@
-create database InventoryManagement;
+-- create database InventoryManagement;
 
 create table item(
     item_id serial primary key,
