@@ -226,7 +226,7 @@ app.get('/items-breakdown/:itemId', async (req, res) => {
 
 app.get('*', (req, res) => {
     res.sendFile('./client/build/index.html');
-}
+});
 
 
 app.listen(PORT);
