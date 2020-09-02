@@ -46,7 +46,7 @@ const ItemProfile = ({ match }) => {
 
     const getItems = async () => {
         try {
-            const response = await fetch(`http://localhost:5000/items`);
+            const response = await fetch(`/items`);
             const items = await response.json();
             setItems(items);
         } catch (error) {
@@ -56,7 +56,7 @@ const ItemProfile = ({ match }) => {
 
     const getItem = async () => {
         try {
-            const response = await fetch(`http://localhost:5000/items/${itemId}`);
+            const response = await fetch(`/items/${itemId}`);
             const item = await response.json();
             setDescription(item.description);
             setInitialDescription(item.description);
@@ -68,7 +68,7 @@ const ItemProfile = ({ match }) => {
 
     const getItemBreakdown = async () => {
         try {
-            const response = await fetch(`http://localhost:5000/items-breakdown/${itemId}`);
+            const response = await fetch(`/items-breakdown/${itemId}`);
             const orders = await response.json();
             setItemBreakdown(orders);
         } catch (error) {
@@ -96,7 +96,7 @@ const ItemProfile = ({ match }) => {
         }
 
         for (let item of items) {
-            if (description != initialDescription && item.description === description) {
+            if (description !== initialDescription && item.description === description) {
                 setDescriptionErr(true);
                 setDescriptionHelperText('Item already exists');
                 return;
@@ -127,7 +127,7 @@ const ItemProfile = ({ match }) => {
     const updateItem = async () => {
         try {
             const body = { description, price };
-            const response = await fetch(`http://localhost:5000/items/${itemId}`, {
+            const response = await fetch(`/items/${itemId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)

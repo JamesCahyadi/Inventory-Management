@@ -120,7 +120,7 @@ const ItemTable = () => {
 
     const getItems = async () => {
         try {
-            const response = await fetch(`http://localhost:5000/items`);
+            const response = await fetch(`/items`);
             const items = await response.json();
             setItems(items);
         } catch (error) {
@@ -131,7 +131,7 @@ const ItemTable = () => {
     const addItem = async () => {
         try {
             const body = { description, price };
-            await fetch('http://localhost:5000/items', {
+            await fetch('/items', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)
@@ -165,7 +165,7 @@ const ItemTable = () => {
             setCheckedItems([]);
             // close modal
             setShowDeleteModal(false);
-            const response = await fetch('http://localhost:5000/items', {
+            const response = await fetch('/items', {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)

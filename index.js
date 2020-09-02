@@ -2,10 +2,14 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const pool = require('./pool');
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
+
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static('./client/build'));
+}
 
 // get all items
 app.get('/items', async (req, res) => {
@@ -219,6 +223,10 @@ app.get('/items-breakdown/:itemId', async (req, res) => {
         console.log(error);
     }
 });
+
+app.get('*', (req, res) => {
+    res.sendFile('./client/build/index.html');
+}
 
 
 app.listen(PORT);

@@ -33,7 +33,7 @@ const OrderItemsTable = ({ match }) => {
 
     const getOrderItems = async () => {
         try {
-            const response = await fetch(`http://localhost:5000/orders/${orderId}`);
+            const response = await fetch(`/orders/${orderId}`);
             const orderItems = await response.json();
             setOrderItems(orderItems);
         } catch (error) {
@@ -53,7 +53,7 @@ const OrderItemsTable = ({ match }) => {
                 // orderItem.qty_received = parseInt(qtyReceived);
                 try {
                     const body = { qtyReceived, itemId };
-                    const response = await fetch(`http://localhost:5000/orders/${orderId}`, {
+                    const response = await fetch(`/orders/${orderId}`, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(body)
@@ -67,7 +67,7 @@ const OrderItemsTable = ({ match }) => {
 
     const receiveAll = async () => {
         try {
-            const response = await fetch(`http://localhost:5000/orders/receive/${orderId}`, {
+            const response = await fetch(`/orders/receive/${orderId}`, {
                 method: 'PUT'
             });
         } catch (error) {

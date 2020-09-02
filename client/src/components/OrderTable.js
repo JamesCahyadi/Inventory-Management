@@ -31,7 +31,7 @@ const OrderTable = () => {
 
     const getOrders = async () => {
         try {
-            const response = await fetch(`http://localhost:5000/orders`);
+            const response = await fetch(`/orders`);
             const orders = await response.json();
             setOrders(orders);
         } catch (error) {

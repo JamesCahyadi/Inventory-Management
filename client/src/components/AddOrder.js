@@ -114,7 +114,7 @@ const AddOrder = ({ location }) => {
         try {
             const body = { refNumber, qtyOrdered, showModal };
             window.location.href = '/orders';
-            const response = await fetch('http://localhost:5000/orders', {
+            const response = await fetch('/orders', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)
@@ -129,7 +129,7 @@ const AddOrder = ({ location }) => {
     const getOrderItems = async () => {
         try {
             for (let i = 0; i < orderItemIds.length; ++i) {
-                const response = await fetch(`http://localhost:5000/items/${orderItemIds[i]}`);
+                const response = await fetch(`/items/${orderItemIds[i]}`);
                 const orderItem = await response.json();
                 setOrderItems(prevOrderItems => [...prevOrderItems, orderItem]);
             }
@@ -140,7 +140,7 @@ const AddOrder = ({ location }) => {
 
     const getOrders = async () => {
         try {
-            const response = await fetch(`http://localhost:5000/orders`);
+            const response = await fetch(`/orders`);
             const allOrders = await response.json();
             setOrders(allOrders);
         } catch (error) {
