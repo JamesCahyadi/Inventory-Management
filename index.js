@@ -97,32 +97,76 @@ app.post('/items', async (req, res) => {
 // delete items
 app.delete('/items', async (req, res) => {
     const { checkedItems } = req.body;
+    // deleting an item from item table will automatically delete the rows in order item table with that same item id
     const deleteItemsQuery = `delete from item where item_id = $1;`
+    // to clean up the orders that have no record in the order item table anymore
+    const deleteOrdersQuery = `delete from orders o where order_id not in (select distinct order_id from orders_item);`
 
     try {
         for (let itemId of checkedItems) {
             const deleteItems = await pool.query(deleteItemsQuery, [itemId]);
         }
+        const deleteOrders = await pool.query(deleteOrdersQuery);
         res.json('Items deleted');
     } catch (error) {
         console.log(error.message);
     }
+});
 
+// delete an order
+app.delete('/orders', async (req, res) => {
+    const { checkedOrders } = req.body;
+    const deleteOrderQuery = `delete from orders where order_id = $1;`
+    try {
+        for (let orderId of checkedOrders) {
+            const deleteOrder = await pool.query(deleteOrderQuery, [orderId]);
+        }
+        res.json();
+    } catch (error) {
+        console.log(error.message);
+    }
 });
 
 // get all orders
 app.get('/orders', async (req, res) => {
-    const allOrders = `
-    select o.order_id, o.ref_number, sum(oi.qty_received) as qty_received, sum(oi.qty_ordered) as qty_ordered
-    from orders_item oi
-    inner join orders o on
-        o.order_id = oi.order_id
-    group by o.order_id, o.ref_number;
-    `
+    const { ref } = req.query;
+    let getOrdersQuery;
+    if (ref) {
+        getOrdersQuery = `
+        select o.order_id, o.ref_number, sum(oi.qty_received) as qty_received, sum(oi.qty_ordered) as qty_ordered
+        from orders_item oi
+        inner join orders o on
+            o.order_id = oi.order_id
+        where o.ref_number ilike '%${ref}%'
+        group by o.order_id, o.ref_number;
+        `
+    } else {
+        getOrdersQuery = `
+        select o.order_id, o.ref_number, sum(oi.qty_received) as qty_received, sum(oi.qty_ordered) as qty_ordered
+        from orders_item oi
+        inner join orders o on
+            o.order_id = oi.order_id
+        group by o.order_id, o.ref_number;
+        `
+    }
 
     try {
-        const orders = await pool.query(allOrders);
-        res.json(orders.rows);
+        const getOrders = await pool.query(getOrdersQuery);
+        res.json(getOrders.rows);
+    } catch (error) {
+        console.log(error.message);
+    }
+});
+
+// update an order ref_number
+app.put('/orders/:orderId', async (req, res) => {
+    const { orderId } = req.params;
+    const { refNumber } = req.body;
+    const updateOrderQuery = `update orders set ref_number = '${refNumber}' where order_id = ${orderId};`
+
+    try {
+        const updateOrder = await pool.query(updateOrderQuery);
+        res.json();
     } catch (error) {
         console.log(error.message);
     }
@@ -170,10 +214,12 @@ app.post('/orders', async (req, res) => {
 app.get('/orders/:id', async (req, res) => {
     const { id } = req.params;
     const ordersItemQuery = `
-    select i.item_id, i.description, i.price, oi.qty_received, oi.qty_ordered
+    select o.ref_number, i.item_id, i.description, i.price, oi.qty_received, oi.qty_ordered
     from orders_item oi
     inner join item i on
         i.item_id = oi.item_id
+    inner join orders o on
+        oi.order_id = o.order_id
     where oi.order_id = ${id};
     `
 
@@ -185,8 +231,9 @@ app.get('/orders/:id', async (req, res) => {
     }
 });
 
+
 // update an orders item record
-app.put('/orders/:id', async (req, res) => {
+app.put('/orders-qty/:id', async (req, res) => {
     const { id } = req.params;
     const { qtyReceived, itemId } = req.body;
     const updateQtyReceivedQuery = `

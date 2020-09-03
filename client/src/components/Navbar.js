@@ -5,28 +5,26 @@ import { Link } from 'react-router-dom';
 
 
 const useStyles = makeStyles({
-    btn: {
+    white: {
         color: 'white'
     }
 });
 
 const Navbar = () => {
     const classes = useStyles();
+    const menus = ['items', 'orders'];
+
     return (
         <AppBar position="static">
             <Toolbar>
-                <Button
-                    className={classes.btn}
-                    component={Link}
-                    to={'/items'}>
-                    Items
-                </Button>
-                <Button
-                    className={classes.btn}
-                    component={Link}
-                    to={'/orders'}>
-                    Orders
-                </Button>
+                {menus.map((menu) => (
+                    <Button
+                        className={classes.white}
+                        component={Link}
+                        to={{ pathname: `/${menu}` }}>
+                        {menu}
+                    </Button>
+                ))}
             </Toolbar>
         </AppBar>
     );

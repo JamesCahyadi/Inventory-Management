@@ -1,59 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import CustomAlert from './subcomponents/CustomAlert';
+import CustomTable from './subcomponents/CustomTable';
+import CustomModal from './subcomponents/CustomModal';
 import { useHistory } from 'react-router-dom';
-import { Alert } from '@material-ui/lab';
-import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import { makeStyles } from '@material-ui/core/styles';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Paper,
-    TextField,
-    Button,
-    Collapse,
-    IconButton,
-    Modal,
-    Typography
-} from '@material-ui/core';
-
-
-const useStyles = makeStyles(theme => ({
-    table: {
-        minWidth: 650,
-    },
-    hidden: {
-        display: 'none'
-    },
-    modal: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    modalPaper: {
-        position: 'absolute',
-        maxWidth: 300,
-        backgroundColor: theme.palette.background.paper,
-        boxShadow: theme.shadows[5],
-        padding: 10
-    },
-    rightAlign: {
-        display: 'flex',
-        justifyContent: 'flex-end',
-        marginRight: 2
-    },
-    centerAlign: {
-        display: 'flex',
-        justifyContent: 'center'
-    }
-}));
+import { TableCell, TableRow, TextField, Button, Typography, Box } from '@material-ui/core';
 
 const AddOrder = ({ location }) => {
-    const classes = useStyles();
     const orderItemIds = location.orderItemIds;
     const [refNumber, setRefNumber] = useState('');
     const [orders, setOrders] = useState([]);
@@ -64,7 +18,7 @@ const AddOrder = ({ location }) => {
     const [showAlert, setShowAlert] = useState(false);
     const [showModal, setShowModal] = useState(false);
     let history = useHistory();
-
+    const headers = ['Item', 'Unit Price', 'Qty Ordered'];
 
     const changeQtyOrdered = (itemId, qty) => {
         setQtyOrdered({ ...qtyOrdered, [itemId]: qty });
@@ -90,16 +44,20 @@ const AddOrder = ({ location }) => {
     const validateQty = () => {
         // check that qtyOrdered textfields have a value
         if (orderItems.length !== Object.keys(qtyOrdered).length) {
+            console.log('first')
             setShowAlert(true);
             return;
         }
 
-        // check the qtyOrdereds are all non zero integers
-        if (!(/^\d+$/).test(Object.keys(qtyOrdered))) {
-            setShowAlert(true);
-            return;
+        // check the qtys ordered are all non zero integers
+        for (let qty of Object.keys(qtyOrdered)) {
+            if (!(/^\d+$/).test(qty)) {
+                setShowAlert(true);
+                return;
+            }
         }
 
+        // duplicate order name
         for (let order of orders) {
             if (order.ref_number === refNumber) {
                 setShowModal(true);
@@ -124,7 +82,6 @@ const AddOrder = ({ location }) => {
         }
     }
 
-
     const getOrderItems = async () => {
         try {
             for (let i = 0; i < orderItemIds.length; ++i) {
@@ -147,114 +104,95 @@ const AddOrder = ({ location }) => {
         }
     }
 
+    // if location.orderItemIds has nothing, redirect to home page
+    const checkLocation = () => {
+        if (!orderItemIds) {
+            history.push('/items');
+        }
+    }
+
     useEffect(() => {
         getOrderItems();
         getOrders();
+        checkLocation();
     }, []);
 
     return (
         <>
-            <Collapse in={showAlert}>
-                <Alert
-                    severity='warning'
-                    action={
-                        <IconButton
-                            aria-label="close"
-                            color="inherit"
-                            size="small"
-                            onClick={() => {
-                                setShowAlert(false);
-                            }}
-                        >
-                            <HighlightOffIcon fontSize="inherit" />
-                        </IconButton>
-                    }
-                >
-                    Please fill in the Qty Ordered column for <b>all</b> items with non-zero integers!
-                </Alert>
-            </Collapse>
-            <Modal
-                open={showModal}
-                onClose={() => setShowModal(false)}
-                // onBackdropClick='false'
-                className={classes.modal}
-            >
-                <div className={classes.modalPaper}>
-                    <div className={classes.rightAlign}>
-                        <IconButton
-                            size='small'
-                            color="inherit"
-                            onClick={() => setShowModal(false)}
-                        >
-                            <HighlightOffIcon fontSize="inherit" />
-                        </IconButton>
-                    </div>
-                    <Typography variant='h5' align='center' gutterBottom>
-                        <b>Duplicate Order Warning!</b>
-                    </Typography>
-                    <Typography align='center' paragraph>
-                        This order ref number <b>already exists</b>.
-                        The items and order quantities will be <b>merged</b> into the existing order.
-                    </Typography>
-                    <div className={classes.centerAlign}>
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            endIcon={<CheckCircleIcon />}
-                            onClick={() => addOrder()}
-                        >
-                            Confirm
-                    </Button>
-                    </div>
-                </div>
-            </Modal>
-            <TextField
-                required
-                label="Order Name"
-                onChange={e => setRefNumber(e.target.value)}
-                error={orderErr}
-                helperText={orderHelperText}
+            <CustomAlert
+                open={showAlert}
+                close={() => setShowAlert(false)}
+                description='Please fill in the Qty Ordered column for all items with non-zero integers!'
             />
-            <Button
-                variant="contained"
-                color="secondary"
-                endIcon={<AddCircleIcon />}
-                onClick={() => validateOrder()}
-            >
-                Submit Order
-            </Button>
-            <TableContainer component={Paper}>
-                <Table className={classes.table} size="small">
-                    <TableHead>
-                        <TableRow selected>
-                            <TableCell>Item</TableCell>
-                            <TableCell>Unit Price</TableCell>
-                            <TableCell>Qty Ordered</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {orderItems.map((orderItem) => (
-                            <TableRow hover key={orderItem.item_id}>
-                                <TableCell>{orderItem.description}</TableCell>
-                                <TableCell>${orderItem.price}</TableCell>
-                                <TableCell>
-                                    <TextField
-                                        required
-                                        type="number"
-                                        placeholder='Enter Amount'
-                                        onChange={e => changeQtyOrdered(orderItem.item_id, e.target.value)}
-                                        InputProps={{
-                                            inputProps: {
-                                                min: 1
-                                            }
-                                        }}
-                                    />
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <CustomModal
+                open={showModal}
+                close={() => setShowModal(false)}
+                body={
+                    <>
+                        <Typography variant='h5' align='center' gutterBottom>
+                            <b>Duplicate Order Warning!</b>
+                        </Typography>
+                        <Typography align='center' paragraph>
+                            This order ref number <b>already exists</b>.
+                            The items and order quantities will be <b>merged</b> into the existing order.
+                        </Typography>
+                        <Box display='flex' justifyContent='center'>
+                            <Button
+                                variant="contained"
+                                color="secondary"
+                                endIcon={<CheckCircleIcon />}
+                                onClick={() => addOrder()}
+                            >
+                                Confirm
+                            </Button>
+                        </Box>
+                    </>
+                }
+            />
+            <Box display='flex' alignItems='center'>
+                <Box margin={1}>
+                    <TextField
+                        required
+                        label="Order Name"
+                        onChange={e => setRefNumber(e.target.value)}
+                        error={orderErr}
+                        helperText={orderHelperText}
+                    />
+                </Box>
+                <Box margin={1}>
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        endIcon={<AddCircleIcon />}
+                        onClick={() => validateOrder()}
+                    >
+                        Submit Order
+                    </Button>
+                </Box>
+            </Box>
+            <CustomTable
+                headers={headers}
+                body=
+                {orderItems.map((orderItem) => (
+                    <TableRow hover key={orderItem.item_id}>
+                        <TableCell>{orderItem.description}</TableCell>
+                        <TableCell>${orderItem.price}</TableCell>
+                        <TableCell>
+                            <TextField
+                                required
+                                type="number"
+                                placeholder='Enter Amount'
+                                onChange={e => changeQtyOrdered(orderItem.item_id, e.target.value)}
+                                InputProps={{
+                                    inputProps: {
+                                        min: 1
+                                    }
+                                }}
+                            />
+                        </TableCell>
+                    </TableRow>
+                ))}
+            />
         </>
     );
 }

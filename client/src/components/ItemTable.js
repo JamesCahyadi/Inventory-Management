@@ -1,61 +1,27 @@
 import React, { useState, useEffect } from 'react';
+import CustomAlert from './subcomponents/CustomAlert';
+import CustomTable from './subcomponents/CustomTable';
+import CustomModal from './subcomponents/CustomModal';
 import { Link } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
-import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import AddBoxIcon from '@material-ui/icons/AddBox';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SearchIcon from '@material-ui/icons/Search';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import { Alert } from '@material-ui/lab';
 import {
-    Table,
-    TableBody,
     TableCell,
-    TableContainer,
-    TableHead,
     TableRow,
-    Paper,
     Button,
     FormControlLabel,
     Checkbox,
-    Collapse,
-    IconButton,
-    Modal,
     TextField,
     Typography,
-    InputAdornment
+    InputAdornment,
+    Box
 } from '@material-ui/core';
 
-const useStyles = makeStyles(theme => ({
-    table: {
-        minWidth: 650,
-    },
-    modal: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    modalPaper: {
-        textAlign: 'center',
-        position: 'absolute',
-        maxWidth: 300,
-        backgroundColor: theme.palette.background.paper,
-        boxShadow: theme.shadows[5],
-        paddingBottom: 5
-    },
-    rightAlign: {
-        display: 'flex',
-        justifyContent: 'flex-end',
-        marginRight: 2
-    },
-    addItemBtn: {
-        marginTop: 10
-    }
-}));
-
 const ItemTable = () => {
-    const classes = useStyles();
+    const headers = ['Item', 'Unit Price', 'Qty on Hand', 'Qty on Order'];
     const [items, setItems] = useState([]);
     const [checkedItems, setCheckedItems] = useState([]);
     const [showOrderAlert, setShowOrderAlert] = useState(false);
@@ -198,206 +164,155 @@ const ItemTable = () => {
 
     return (
         <>
-            <Collapse in={showOrderAlert}>
-                <Alert
-                    severity='warning'
-                    action={
-                        <IconButton
-                            color="inherit"
-                            size="small"
-                            onClick={() => {
-                                setShowOrderAlert(false);
-                            }}
-                        >
-                            <HighlightOffIcon fontSize="inherit" />
-                        </IconButton>
-                    }
-                >
-                    You must select at least one item to create an order!
-                </Alert>
-            </Collapse>
-            <Collapse in={showDeleteAlert}>
-                <Alert
-                    severity='warning'
-                    action={
-                        <IconButton
-                            color="inherit"
-                            size="small"
-                            onClick={() => {
-                                setShowDeleteAlert(false);
-                            }}
-                        >
-                            <HighlightOffIcon fontSize="inherit" />
-                        </IconButton>
-                    }
-                >
-                    You must select at least one item to delete an order!
-                </Alert>
-            </Collapse>
-            <TextField
-                label="Search for an item"
-                value={searchValue}
-                onChange={e => lookup(e.target.value)}
-                InputProps={{
-                    startAdornment: (
-                        <InputAdornment position="start">
-                            <SearchIcon />
-                        </InputAdornment>
-                    ),
-                }}
+            <CustomAlert
+                open={showOrderAlert}
+                close={() => setShowOrderAlert(false)}
+                description=' You must select at least one item to create an order!'
             />
-            <Button
-                variant="contained"
-                color="secondary"
-                startIcon={<ShoppingCartIcon />}
-                component={Link}
-                onClick={() => checkedItems.length > 0 ? setShowOrderAlert(false) : setShowOrderAlert(true)}
-                to={checkedItems.length > 0 ?
-                    {
-                        pathname: '/add-order',
-                        orderItemIds: checkedItems
-                    }
-                    : '#'}
-            >
-                New Order
-            </Button>
-            <Button
-                variant="contained"
-                color="secondary"
-                startIcon={<AddBoxIcon />}
-                onClick={() => setShowNewModal(true)}
-            >
-                New Item
-            </Button>
-            <Button
-                variant="contained"
-                color="secondary"
-                startIcon={<DeleteIcon />}
-                onClick={() => checkedItems.length > 0 ? (setShowDeleteAlert(false), setShowDeleteModal(true)) : setShowDeleteAlert(true)}
-            >
-                Delete Items
-            </Button>
-            <Modal
+            <CustomAlert
+                open={showDeleteAlert}
+                close={() => setShowDeleteAlert(false)}
+                description=' You must select at least one item to delete!'
+            />
+            <Box display='flex' justifyContent='space-between' alignItems='center'>
+                <Box margin={1}>
+                    <TextField
+                        label="Search for an item"
+                        value={searchValue}
+                        onChange={e => lookup(e.target.value)}
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <SearchIcon />
+                                </InputAdornment>
+                            ),
+                        }}
+                    />
+                </Box>
+                <Box display='flex'>
+                    <Box marginRight={1}>
+                        <Button
+                            variant="contained"
+                            color="secondary"
+                            endIcon={<AddBoxIcon />}
+                            onClick={() => setShowNewModal(true)}
+                        >
+                            New Item
+                        </Button>
+                    </Box>
+                    <Box marginRight={1}>
+                        <Button
+                            variant="contained"
+                            color="secondary"
+                            endIcon={<ShoppingCartIcon />}
+                            component={Link}
+                            onClick={() => checkedItems.length > 0 ? setShowOrderAlert(false) : setShowOrderAlert(true)}
+                            to={checkedItems.length > 0 ?
+                                {
+                                    pathname: '/add-order',
+                                    orderItemIds: checkedItems
+                                }
+                                : '#'}
+                        >
+                            New Order
+                        </Button>
+                    </Box>
+                    <Box marginRight={1}>
+                        <Button
+                            variant="contained"
+                            color="secondary"
+                            endIcon={<DeleteIcon />}
+                            onClick={() => checkedItems.length > 0 ? (setShowDeleteAlert(false), setShowDeleteModal(true)) : setShowDeleteAlert(true)}
+                        >
+                            Delete Items
+                        </Button>
+                    </Box>
+                </Box>
+            </Box>
+            <CustomModal
                 open={showNewModal}
-                onClose={() => setShowNewModal(false)}
-                className={classes.modal}
-            >
-                <div className={classes.modalPaper}>
-                    <div className={classes.rightAlign}>
-                        <IconButton
-                            className={classes.modalClose}
-                            color="inherit"
-                            size='small'
-                            onClick={() => setShowNewModal(false)}
-                        >
-                            <HighlightOffIcon fontSize="inherit" />
-                        </IconButton>
-                    </div>
-                    <Typography variant='h5' align='center'>
-                        <b>Item Information</b>
-                    </Typography>
-                    <TextField
-                        required
-                        label="Item Name"
-                        onChange={e => setDescription(e.target.value)}
-                        error={descriptionErr}
-                        helperText={descriptionHelperText}
-                    />
-                    <TextField
-                        required
-                        label="Price"
-                        onChange={e => setPrice(e.target.value)}
-                        error={priceErr}
-                        helperText={priceHelpertext}
-                    />
-                    <Button
-                        className={classes.addItemBtn}
-                        variant="contained"
-                        color="primary"
-                        endIcon={<CheckCircleIcon />}
-                        onClick={() => validateDescription()}
-                    >
-                        Add Item
-                    </Button>
-                </div>
-            </Modal>
-            <Modal
+                close={() => setShowNewModal(false)}
+                body={
+                    <>
+                        <Typography variant='h5' align='center'>
+                            <b>Item Information</b>
+                        </Typography>
+                        <TextField
+                            required
+                            label="Item Name"
+                            onChange={e => setDescription(e.target.value)}
+                            error={descriptionErr}
+                            helperText={descriptionHelperText}
+                        />
+                        <TextField
+                            required
+                            label="Price"
+                            onChange={e => setPrice(e.target.value)}
+                            error={priceErr}
+                            helperText={priceHelpertext}
+                        />
+                        <Box marginTop={2}>
+                            <Button
+                                variant="contained"
+                                color="secondary"
+                                endIcon={<CheckCircleIcon />}
+                                onClick={() => validateDescription()}
+                            >
+                                Add Item
+                            </Button>
+                        </Box>
+                    </>
+                }
+            />
+            <CustomModal
                 open={showDeleteModal}
-                onClose={() => setShowDeleteModal(false)}
-                className={classes.modal}
-            >
-                <div className={classes.modalPaper}>
-                    <div className={classes.rightAlign}>
-                        <IconButton
-                            className={classes.modalClose}
-                            color="inherit"
-                            size='small'
-                            onClick={() => setShowDeleteModal(false)}
+                close={() => setShowDeleteModal(false)}
+                body={
+                    <>
+                        <Typography variant='h5' align='center' gutterBottom>
+                            <b>Delete Item Confirmation</b>
+                        </Typography>
+                        <Typography align='center' paragraph>
+                            You are about to <b>delete</b> {checkedItems.length} items!
+                            These items will also be removed from all orders.
+                            This action cannot be undone.
+                        </Typography>
+                        <Button
+                            variant="contained"
+                            color="secondary"
+                            endIcon={<CheckCircleIcon />}
+                            onClick={() => deleteItems()}
                         >
-                            <HighlightOffIcon fontSize="inherit" />
-                        </IconButton>
-                    </div>
-                    <Typography variant='h5' align='center' gutterBottom>
-                        <b>Delete Item Confirmation</b>
-                    </Typography>
-                    <Typography align='center' paragraph>
-                        You are about to <b>delete</b> {checkedItems.length} items!
-                        These items will also be removed from all orders.
-                        This action cannot be undone.
-                    </Typography>
-                    <Button
-                        className={classes.addItemBtn}
-                        variant="contained"
-                        color="primary"
-                        endIcon={<CheckCircleIcon />}
-                        onClick={() => deleteItems()}
-                    >
-                        Confirm
-                    </Button>
-                </div>
-            </Modal>
-            <TableContainer component={Paper}>
-                <Table className={classes.table} size="small">
-                    <TableHead>
-                        <TableRow selected>
-                            <TableCell>
-                                Item
-                            </TableCell>
-                            <TableCell>Unit Price</TableCell>
-                            <TableCell>Qty on Hand</TableCell>
-                            <TableCell>Qty on Order</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {items.map((item) => (
-                            <TableRow hover key={item.item_id}>
-                                <TableCell>
-                                    <FormControlLabel
-                                        control=
-                                        {
-                                            <Checkbox
-                                                value={item.item_id}
-                                                onChange={e => changeCheckedItems(e.target.value)}
-                                            />
-                                        }
+                            Confirm
+                        </Button>
+                    </>
+                }
+            />
+            <CustomTable
+                headers={headers}
+                body=
+                {items.map((item) => (
+                    <TableRow hover key={item.item_id}>
+                        <TableCell>
+                            <FormControlLabel
+                                control=
+                                {
+                                    <Checkbox
+                                        value={item.item_id}
+                                        onChange={e => changeCheckedItems(e.target.value)}
                                     />
-                                    <Link to={
-                                        {
-                                            pathname: `/item/${item.item_id}`,
-                                            items: items
-                                        }}
-                                    >
-                                        {item.description}
-                                    </Link>
-                                </TableCell>
-                                <TableCell>${item.price}</TableCell>
-                                <TableCell>{item.qty_on_hand}</TableCell>
-                                <TableCell>{item.qty_on_order}</TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+                                }
+                            />
+                            <Link to={{ pathname: `/item/${item.item_id}` }}>
+                                {item.description}
+                            </Link>
+                        </TableCell>
+                        <TableCell>${item.price}</TableCell>
+                        <TableCell>{item.qty_on_hand}</TableCell>
+                        <TableCell>{item.qty_on_order}</TableCell>
+                    </TableRow>
+                ))}
+            />
         </>
     );
 }

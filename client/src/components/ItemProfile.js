@@ -1,25 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import CustomTable from './subcomponents/CustomTable';
 import { Link, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Paper,
-    Typography,
-    TextField,
-    Button
-} from '@material-ui/core';
-
+import { TableCell, TableRow, Typography, TextField, Button, Box } from '@material-ui/core';
 
 const useStyles = makeStyles({
-    table: {
-        minWidth: 650,
-    },
     green: {
         color: '#3cb371'
     },
@@ -28,11 +14,8 @@ const useStyles = makeStyles({
     }
 });
 
-
 const ItemProfile = ({ match }) => {
     const classes = useStyles();
-    //mjust make an edit on the item table, much easier
-    // reget the items
     const itemId = match.params.id;
     const [items, setItems] = useState([]);
     const [itemBreakdown, setItemBreakdown] = useState([]);
@@ -44,6 +27,8 @@ const ItemProfile = ({ match }) => {
     const [priceErr, setPriceErr] = useState(false);
     const [priceHelpertext, setPriceHelperText] = useState('');
     let history = useHistory();
+    const headers = ['Item In Orders:', 'Item Qty Received', 'Item Qty Ordered', 'Item Status'];
+
 
     const getItems = async () => {
         try {
@@ -147,71 +132,65 @@ const ItemProfile = ({ match }) => {
 
     return (
         <>
-            <TextField
-                required
-                label="Item Name"
-                placeholder={initialDescription}
-                value={description || ''}
-                onChange={e => setDescription(e.target.value)}
-                error={descriptionErr}
-                helperText={descriptionHelperText}
+            <Box display='flex' alignItems='center'>
+                <Box margin={1}>
+                    <TextField
+                        required
+                        label="Item Name"
+                        placeholder={initialDescription}
+                        value={description || ''}
+                        onChange={e => setDescription(e.target.value)}
+                        error={descriptionErr}
+                        helperText={descriptionHelperText}
+                    />
+                </Box>
+                <Box margin={1}>
+                    <TextField
+                        required
+                        label="Price"
+                        value={price || ''}
+                        onChange={e => setPrice(e.target.value)}
+                        error={priceErr}
+                        helperText={priceHelpertext}
+                    />
+                </Box>
+                <Box margin={1}>
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        endIcon={<CheckCircleIcon />}
+                        onClick={() => validateDescription()}
+                    >
+                        Save
+                    </Button>
+                </Box>
+            </Box>
+            <CustomTable
+                headers={headers}
+                body=
+                {itemBreakdown.map((order) => (
+                    <TableRow hover key={order.ref_number}>
+                        <TableCell>
+                            <Link to={{
+                                pathname: `/orders/${order.order_id}`
+                            }}
+                            >
+                                {order.ref_number}
+                            </Link>
+                        </TableCell>
+                        <TableCell>{order.qty_received}</TableCell>
+                        <TableCell>{order.qty_ordered}</TableCell>
+                        <TableCell>
+                            <Typography
+                                className={order.qty_received === order.qty_ordered ? classes.green : classes.red}
+                                variant='inherit'
+                            >
+                                {order.qty_received === order.qty_ordered ? 'Complete' : 'Incomplete'}
+                            </Typography>
+                        </TableCell>
+                    </TableRow>
+                ))}
             />
-            <TextField
-                required
-                label="Price"
-                value={price || ''}
-                onChange={e => setPrice(e.target.value)}
-                error={priceErr}
-                helperText={priceHelpertext}
-            />
-            <Button
-                variant="contained"
-                color="secondary"
-                endIcon={<CheckCircleIcon />}
-                onClick={() => validateDescription()}
-            >
-                Save
-            </Button>
-            <Typography>
-                Item Breakdown
-            </Typography>
-
-            <TableContainer component={Paper}>
-                <Table className={classes.table} size="small">
-                    <TableHead>
-                        <TableRow selected>
-                            <TableCell>Order Ref Number</TableCell>
-                            <TableCell>Qty Received</TableCell>
-                            <TableCell>Qty Ordered</TableCell>
-                            <TableCell>Status</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {itemBreakdown.map((order) => (
-                            <TableRow hover key={order.order_id}>
-                                <TableCell>
-                                    <Link to={{
-                                        pathname: `/orders/${order.order_id}`
-                                    }}
-                                    >
-                                        {order.ref_number}
-                                    </Link>
-                                </TableCell>
-                                <TableCell>{order.qty_received}</TableCell>
-                                <TableCell>{order.qty_ordered}</TableCell>
-                                <TableCell>
-                                    <Typography
-                                        className={order.qty_received === order.qty_ordered ? classes.green : classes.red}
-                                        variant='inherit'
-                                    >
-                                        {order.qty_received === order.qty_ordered ? 'Complete' : 'Incomplete'}
-                                    </Typography>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer >
         </>
     );
 }

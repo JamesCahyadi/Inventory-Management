@@ -1,47 +1,37 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
+import CustomTable from './subcomponents/CustomTable';
+import CustomAlert from './subcomponents/CustomAlert';
+import { Link, useHistory } from 'react-router-dom';
+import { TableCell, TableRow, Button, TextField, Box } from '@material-ui/core';
 import InputIcon from '@material-ui/icons/Input';
-import HighlightOffIcon from '@material-ui/icons/HighlightOff';
-import { Alert } from '@material-ui/lab';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Paper,
-    Button,
-    TextField,
-    Collapse,
-    IconButton
-} from '@material-ui/core';
-
-const useStyles = makeStyles({
-    table: {
-        minWidth: 650,
-    }
-});
-
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 
 const OrderItemsTable = ({ match }) => {
-    const classes = useStyles();
     const orderId = match.params.id;
     const [orderItems, setOrderItems] = useState([]);
     const [showAlert, setShowAlert] = useState(false);
+    const [initialRefNumber, setInitialRefNumber] = useState('');
+    const [refNumber, setRefNumber] = useState('');
+    const [refNumberErr, setRefNumberErr] = useState(false);
+    const [refNumberHelperText, setRefNumberHelperText] = useState('');
+    const [orders, setOrders] = useState([]);
+    const history = useHistory();
+
+    const headers = ['Item', 'Unit Price', 'Qty Received', 'Qty Ordered'];
 
     const getOrderItems = async () => {
         try {
             const response = await fetch(`/orders/${orderId}`);
             const orderItems = await response.json();
             setOrderItems(orderItems);
+            setInitialRefNumber(orderItems[0].ref_number);
+            setRefNumber(orderItems[0].ref_number);
         } catch (error) {
             console.log(error.message);
         }
     }
 
-    const updateQtyReceived = async (itemId, qtyReceived, qtyOrdered) => {
+    const updateQtyReceived = async (itemId, qtyReceived) => {
         // check that qtyReceived is a number
         if (!(/^\d+$/).test(qtyReceived)) {
             setShowAlert(true);
@@ -50,10 +40,9 @@ const OrderItemsTable = ({ match }) => {
 
         for (const orderItem of orderItems) {
             if (orderItem.item_id === itemId) {
-                // orderItem.qty_received = parseInt(qtyReceived);
                 try {
                     const body = { qtyReceived, itemId };
-                    const response = await fetch(`/orders/${orderId}`, {
+                    const response = await fetch(`/orders-qty/${orderId}`, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(body)
@@ -75,81 +64,125 @@ const OrderItemsTable = ({ match }) => {
         }
     }
 
+    const validateRefNumber = () => {
+        if (!refNumber) {
+            setRefNumberErr(true);
+            setRefNumberHelperText('Required Field');
+            return;
+        }
+        if (!(/^[a-zA-Z\s\d]*$/).test(refNumber)) {
+            setRefNumberErr(true);
+            setRefNumberHelperText('Only letters and numbers allowed');
+            return;
+        }
+
+        setRefNumberErr(false);
+        setRefNumberHelperText('');
+        updateRefNumber();
+    }
+
+    const updateRefNumber = async () => {
+        try {
+            const body = { refNumber };
+            const response = await fetch(`/orders/${orderId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            history.push('/orders');
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
+
+    const getOrders = async () => {
+        try {
+            const response = await fetch(`/orders`);
+            const allOrders = await response.json();
+            setOrders(allOrders);
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
+
     useEffect(() => {
         getOrderItems();
+        getOrders();
     }, []);
-    // get text input field for qty received, placeholder is current qty received
+
     return (
         <>
-            <Collapse in={showAlert}>
-                <Alert
-                    severity='warning'
-                    action={
-                        <IconButton
-                            aria-label="close"
-                            color="inherit"
-                            size="small"
-                            onClick={() => {
-                                setShowAlert(false);
-                            }}
-                        >
-                            <HighlightOffIcon fontSize="inherit" />
-                        </IconButton>
-                    }
-                >
-                    All Qty Received values must be a number from 0 - Qty Ordered value!
-                </Alert>
-            </Collapse>
-            <Button
-                variant="contained"
-                color="secondary"
-                endIcon={<InputIcon />}
-                onClick={() => receiveAll()}
-                component={Link}
-                to='/orders'
-            >
-                Receive All
-            </Button>
-            <TableContainer component={Paper}>
-                <Table className={classes.table} size="small" aria-label="a dense table">
-                    <TableHead>
-                        <TableRow selected>
-                            <TableCell>Item Description</TableCell>
-                            <TableCell>Item Price</TableCell>
-                            <TableCell>Qty Received</TableCell>
-                            <TableCell>Qty Ordered</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {orderItems.map((orderItem) => (
-                            <TableRow hover key={orderItem.item_id}>
-                                <TableCell>
-                                    {orderItem.description}
-                                </TableCell>
-                                <TableCell>
-                                    {orderItem.price}
-                                </TableCell>
-                                <TableCell>
-                                    <TextField
-                                        type="number"
-                                        placeholder={orderItem.qty_received.toString()}
-                                        onBlur={e => updateQtyReceived(orderItem.item_id, e.target.value, orderItem.qty_ordered)}
-                                        InputProps={{
-                                            inputProps: {
-                                                min: orderItem.qty_received,
-                                                max: orderItem.qty_ordered
-                                            }
-                                        }}
-                                    />
-                                </TableCell>
-                                <TableCell>
-                                    {orderItem.qty_ordered}
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <CustomAlert
+                open={showAlert}
+                close={() => setShowAlert(false)}
+                description='All Qty Received values must be a number between 0 and the Qty Ordered value!'
+            />
+            <Box display='flex' alignItems='center'>
+                <Box margin={1}>
+                    <TextField
+                        required
+                        label="Order Ref Number"
+                        placeholder={initialRefNumber}
+                        value={refNumber || ''}
+                        onChange={e => setRefNumber(e.target.value)}
+                        error={refNumberErr}
+                        helperText={refNumberHelperText}
+                    />
+                </Box>
+                <Box margin={1}>
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        endIcon={<CheckCircleIcon />}
+                        onClick={() => validateRefNumber()}
+                    >
+                        Save
+                    </Button>
+                </Box>
+                <Box margin={1}>
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        endIcon={<InputIcon />}
+                        onClick={() => receiveAll()}
+                        component={Link}
+                        to='/orders'
+                    >
+                        Receive All
+                    </Button>
+                </Box>
+            </Box>
+            <CustomTable
+                headers={headers}
+                body={orderItems.map((orderItem) => (
+                    <TableRow hover key={orderItem.item_id}>
+                        <TableCell>
+                            <Link to={{ pathname: `/item/${orderItem.item_id}` }}>
+                                {orderItem.description}
+                            </Link>
+                        </TableCell>
+                        <TableCell>
+                            ${orderItem.price}
+                        </TableCell>
+                        <TableCell>
+                            <TextField
+                                type="number"
+                                placeholder={orderItem.qty_received.toString()}
+                                onBlur={e => updateQtyReceived(orderItem.item_id, e.target.value)}
+                                InputProps={{
+                                    inputProps: {
+                                        min: 0,
+                                        max: orderItem.qty_ordered
+                                    }
+                                }}
+                            />
+                        </TableCell>
+                        <TableCell>
+                            {orderItem.qty_ordered}
+                        </TableCell>
+                    </TableRow>
+                ))}
+            />
         </>
     );
 }
