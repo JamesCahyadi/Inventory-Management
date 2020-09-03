@@ -5,6 +5,7 @@ import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import AddBoxIcon from '@material-ui/icons/AddBox';
 import DeleteIcon from '@material-ui/icons/Delete';
+import SearchIcon from '@material-ui/icons/Search';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import { Alert } from '@material-ui/lab';
 import {
@@ -14,7 +15,6 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-    TableSortLabel,
     Paper,
     Button,
     FormControlLabel,
@@ -23,7 +23,8 @@ import {
     IconButton,
     Modal,
     TextField,
-    Typography
+    Typography,
+    InputAdornment
 } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
@@ -67,6 +68,7 @@ const ItemTable = () => {
     const [price, setPrice] = useState();
     const [priceErr, setPriceErr] = useState(false);
     const [priceHelpertext, setPriceHelperText] = useState('');
+    const [searchValue, setSearchValue] = useState('');
 
 
     const validateDescription = () => {
@@ -118,9 +120,14 @@ const ItemTable = () => {
     }
 
 
-    const getItems = async () => {
+    const getItems = async (item = '') => {
         try {
-            const response = await fetch(`/items`);
+            let response;
+            if (!item) {
+                response = await fetch(`/items`);
+            } else {
+                response = await fetch(`/items/?description=${item}`);
+            }
             const items = await response.json();
             setItems(items);
         } catch (error) {
@@ -170,14 +177,24 @@ const ItemTable = () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)
             });
+            getItems();
         } catch (error) {
             console.log(error.message);
         }
     }
 
+    const lookup = (item) => {
+        setSearchValue(item);
+        if (item) {
+            getItems(item);
+        } else {
+            getItems();
+        }
+    }
+
     useEffect(() => {
         getItems();
-    }, [items]);
+    }, []);
 
     return (
         <>
@@ -217,7 +234,18 @@ const ItemTable = () => {
                     You must select at least one item to delete an order!
                 </Alert>
             </Collapse>
-
+            <TextField
+                label="Search for an item"
+                value={searchValue}
+                onChange={e => lookup(e.target.value)}
+                InputProps={{
+                    startAdornment: (
+                        <InputAdornment position="start">
+                            <SearchIcon />
+                        </InputAdornment>
+                    ),
+                }}
+            />
             <Button
                 variant="contained"
                 color="secondary"

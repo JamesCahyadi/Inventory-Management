@@ -113,13 +113,12 @@ const AddOrder = ({ location }) => {
     const addOrder = async () => {
         try {
             const body = { refNumber, qtyOrdered, showModal };
-            window.location.href = '/orders';
             const response = await fetch('/orders', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)
             });
-            //.then(history.push('/orders'));
+            history.push('/orders');
         } catch (error) {
             console.log(error.message);
         }

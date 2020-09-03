@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import {
@@ -43,6 +43,7 @@ const ItemProfile = ({ match }) => {
     const [price, setPrice] = useState();
     const [priceErr, setPriceErr] = useState(false);
     const [priceHelpertext, setPriceHelperText] = useState('');
+    let history = useHistory();
 
     const getItems = async () => {
         try {
@@ -132,6 +133,7 @@ const ItemProfile = ({ match }) => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)
             });
+            history.push('/items');
         } catch (error) {
             console.log(error.message);
         }

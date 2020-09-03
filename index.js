@@ -13,13 +13,27 @@ if (process.env.NODE_ENV === 'production') {
 
 // get all items
 app.get('/items', async (req, res) => {
-    const allItemsQuery = `
-    select i.item_id ,i.description, i.price, sum(coalesce(oi.qty_received, 0)) as qty_on_hand, sum(coalesce(oi.qty_ordered, 0)) as qty_on_order
-    from item i
-    left join orders_item oi on
+    const { description } = req.query;
+    let allItemsQuery;
+
+    if (description) {
+        allItemsQuery = `
+        select i.item_id ,i.description, i.price, sum(coalesce(oi.qty_received, 0)) as qty_on_hand, sum(coalesce(oi.qty_ordered, 0)) as qty_on_order
+        from item i
+        left join orders_item oi on
         oi.item_id = i.item_id
-    group by i.item_id, i.description, i.price;
-    `
+        where i.description ilike '%${description}%'
+        group by i.item_id, i.description, i.price;
+        `
+    } else {
+        allItemsQuery = `
+        select i.item_id ,i.description, i.price, sum(coalesce(oi.qty_received, 0)) as qty_on_hand, sum(coalesce(oi.qty_ordered, 0)) as qty_on_order
+        from item i
+        left join orders_item oi on
+        oi.item_id = i.item_id
+        group by i.item_id, i.description, i.price;
+        `
+    }
 
     try {
         const allItems = await pool.query(allItemsQuery);
@@ -31,16 +45,17 @@ app.get('/items', async (req, res) => {
 
 // get one item
 app.get('/items/:itemId', async (req, res) => {
-    const { itemId } = req.params;
     const oneItemQuery = 'select * from item i where i.item_id = $1;'
 
     try {
+        const { itemId } = req.params;
         const oneItem = await pool.query(oneItemQuery, [itemId]);
         res.json(oneItem.rows[0]);
     } catch (error) {
         console.log(error.message);
     }
 });
+
 
 // update an item
 app.put('/items/:itemId', async (req, res) => {
@@ -143,6 +158,7 @@ app.post('/orders', async (req, res) => {
             // if item id is null, insert into order items otherwise create a new row
             const updateOrderItems = await pool.query
                 (itemId ? updateOrderItemsQuery : insertOrderItemsQuery, [orderId, key, value]);
+            res.json();
         }
     } catch (error) {
         console.log(error.message);
