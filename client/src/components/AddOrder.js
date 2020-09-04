@@ -71,7 +71,7 @@ const AddOrder = ({ location }) => {
     const addOrder = async () => {
         try {
             const body = { refNumber, qtyOrdered, showModal };
-            const response = await fetch('/orders', {
+            await fetch('/orders', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)

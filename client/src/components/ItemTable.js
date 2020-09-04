@@ -138,7 +138,7 @@ const ItemTable = () => {
             setCheckedItems([]);
             // close modal
             setShowDeleteModal(false);
-            const response = await fetch('/items', {
+            await fetch('/items', {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)

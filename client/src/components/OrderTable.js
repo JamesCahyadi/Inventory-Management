@@ -22,12 +22,12 @@ const useStyles = makeStyles({
 
 const OrderTable = () => {
     const classes = useStyles();
-    const headers = ['Order Ref Number', 'Qty Received', 'Qty Ordered', 'Status'];
     const [orders, setOrders] = useState([]);
     const [searchValue, setSearchValue] = useState('');
     const [checkedOrders, setCheckedOrders] = useState([]);
     const [showDeleteAlert, setShowDeleteAlert] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const headers = ['Order Ref Number', 'Qty Received', 'Qty Ordered', 'Total Items', 'Order Value', 'Status'];
 
     const getOrders = async (order = '') => {
         try {
@@ -69,7 +69,7 @@ const OrderTable = () => {
             const body = { checkedOrders };
             setCheckedOrders([]);
             setShowDeleteModal(false);
-            const response = await fetch(`/orders`, {
+            await fetch(`/orders`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)
@@ -79,8 +79,6 @@ const OrderTable = () => {
             console.log(error.message);
         }
     }
-
-
 
     useEffect(() => {
         getOrders();
@@ -165,6 +163,8 @@ const OrderTable = () => {
                         </TableCell>
                         <TableCell>{order.qty_received}</TableCell>
                         <TableCell>{order.qty_ordered}</TableCell>
+                        <TableCell>{order.total_items}</TableCell>
+                        <TableCell>${order.order_value}</TableCell>
                         <TableCell>
                             <Typography
                                 className={order.qty_received === order.qty_ordered ? classes.green : classes.red}

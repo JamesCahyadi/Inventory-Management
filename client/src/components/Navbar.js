@@ -19,6 +19,7 @@ const Navbar = () => {
             <Toolbar>
                 {menus.map((menu) => (
                     <Button
+                        key={menu}
                         className={classes.white}
                         component={Link}
                         to={{ pathname: `/${menu}` }}>

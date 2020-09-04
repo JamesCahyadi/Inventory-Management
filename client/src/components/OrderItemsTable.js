@@ -16,7 +16,6 @@ const OrderItemsTable = ({ match }) => {
     const [refNumberHelperText, setRefNumberHelperText] = useState('');
     const [orders, setOrders] = useState([]);
     const history = useHistory();
-
     const headers = ['Item', 'Unit Price', 'Qty Received', 'Qty Ordered'];
 
     const getOrderItems = async () => {
@@ -42,7 +41,7 @@ const OrderItemsTable = ({ match }) => {
             if (orderItem.item_id === itemId) {
                 try {
                     const body = { qtyReceived, itemId };
-                    const response = await fetch(`/orders-qty/${orderId}`, {
+                    await fetch(`/orders/item/${orderId}`, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(body)
@@ -56,7 +55,7 @@ const OrderItemsTable = ({ match }) => {
 
     const receiveAll = async () => {
         try {
-            const response = await fetch(`/orders/receive/${orderId}`, {
+            await fetch(`/orders/receive/${orderId}`, {
                 method: 'PUT'
             });
         } catch (error) {
@@ -76,6 +75,14 @@ const OrderItemsTable = ({ match }) => {
             return;
         }
 
+        for (let order of orders) {
+            if (refNumber !== initialRefNumber && order.ref_number === refNumber) {
+                setRefNumberErr(true);
+                setRefNumberHelperText('Order already exists');
+                return;
+            }
+        }
+
         setRefNumberErr(false);
         setRefNumberHelperText('');
         updateRefNumber();
@@ -84,7 +91,7 @@ const OrderItemsTable = ({ match }) => {
     const updateRefNumber = async () => {
         try {
             const body = { refNumber };
-            const response = await fetch(`/orders/${orderId}`, {
+            await fetch(`/orders/${orderId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)

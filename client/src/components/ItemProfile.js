@@ -54,7 +54,7 @@ const ItemProfile = ({ match }) => {
 
     const getItemBreakdown = async () => {
         try {
-            const response = await fetch(`/items-breakdown/${itemId}`);
+            const response = await fetch(`/items/breakdown/${itemId}`);
             const orders = await response.json();
             setItemBreakdown(orders);
         } catch (error) {
@@ -113,7 +113,7 @@ const ItemProfile = ({ match }) => {
     const updateItem = async () => {
         try {
             const body = { description, price };
-            const response = await fetch(`/items/${itemId}`, {
+            await fetch(`/items/${itemId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)
