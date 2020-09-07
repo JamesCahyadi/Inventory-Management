@@ -170,7 +170,7 @@ const AddOrder = ({ location }) => {
                 body=
                 {orderItems.map((orderItem) => (
                     <TableRow hover key={orderItem.item_id}>
-                        <TableCell>{orderItem.description}</TableCell>
+                        <TableCell style={{ whiteSpace: "nowrap" }}>{orderItem.description}</TableCell>
                         <TableCell>${orderItem.price}</TableCell>
                         <TableCell>
                             <TextField

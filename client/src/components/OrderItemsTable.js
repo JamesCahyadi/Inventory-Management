@@ -158,7 +158,7 @@ const OrderItemsTable = ({ match }) => {
                 headers={headers}
                 body={orderItems.map((orderItem) => (
                     <TableRow hover key={orderItem.item_id}>
-                        <TableCell>
+                        <TableCell style={{ whiteSpace: "nowrap" }}>
                             <Link to={{ pathname: `/item/${orderItem.item_id}` }}>
                                 {orderItem.description}
                             </Link>

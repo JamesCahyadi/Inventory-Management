@@ -142,7 +142,7 @@ const OrderTable = () => {
                 body=
                 {orders.map((order) => (
                     <TableRow hover key={order.order_id}>
-                        <TableCell>
+                        <TableCell style={{ whiteSpace: "nowrap" }}>
                             <FormControlLabel
                                 control=
                                 {

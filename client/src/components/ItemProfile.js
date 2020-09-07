@@ -167,7 +167,7 @@ const ItemProfile = ({ match }) => {
                 body=
                 {itemBreakdown.map((order) => (
                     <TableRow hover key={order.ref_number}>
-                        <TableCell>
+                        <TableCell style={{ whiteSpace: "nowrap" }}>
                             <Link to={{
                                 pathname: `/orders/${order.order_id}`
                             }}

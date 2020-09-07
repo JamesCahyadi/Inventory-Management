@@ -282,7 +282,7 @@ const ItemTable = () => {
                 body=
                 {items.map((item) => (
                     <TableRow hover key={item.item_id}>
-                        <TableCell>
+                        <TableCell style={{ whiteSpace: "nowrap" }}>
                             <FormControlLabel
                                 control=
                                 {
