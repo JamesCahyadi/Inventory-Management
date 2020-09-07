@@ -6,8 +6,9 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import { TableCell, TableRow, Typography, TextField, InputAdornment, Box, FormControlLabel, Checkbox, Button } from '@material-ui/core';
+import { TableCell, TableRow, Typography, TextField, InputAdornment, Box, FormControlLabel, Checkbox } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
+import CustomButton from './subcomponents/CustomButton';
 
 
 const useStyles = makeStyles({
@@ -105,15 +106,11 @@ const OrderTable = () => {
                             amounts for the items in these orders.
                             This action cannot be undone.
                         </Typography>
-                        <Button
-                            size='small'
-                            variant="contained"
-                            color="secondary"
-                            endIcon={<CheckCircleIcon />}
-                            onClick={() => deleteOrders()}
-                        >
-                            Confirm
-                        </Button>
+                        <CustomButton
+                            label='Confirm'
+                            Icon={<CheckCircleIcon />}
+                            click={() => deleteOrders()}
+                        />
                     </>
                 }
             />
@@ -133,15 +130,11 @@ const OrderTable = () => {
                     />
                 </Box>
                 <Box margin={1}>
-                    <Button
-                        size='small'
-                        variant="contained"
-                        color="secondary"
-                        endIcon={<DeleteIcon />}
-                        onClick={() => checkedOrders.length > 0 ? (setShowDeleteAlert(false), setShowDeleteModal(true)) : setShowDeleteAlert(true)}
-                    >
-                        Delete Orders
-                    </Button>
+                    <CustomButton
+                        label='Delete Orders'
+                        icon={<DeleteIcon />}
+                        click={() => checkedOrders.length > 0 ? (setShowDeleteAlert(false), setShowDeleteModal(true)) : setShowDeleteAlert(true)}
+                    />
                 </Box>
             </Box>
             <CustomTable

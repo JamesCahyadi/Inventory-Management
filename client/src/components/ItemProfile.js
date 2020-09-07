@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import CustomTable from './subcomponents/CustomTable';
+import CustomButton from './subcomponents/CustomButton';
 import { Link, useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import { TableCell, TableRow, Typography, TextField, Button, Box } from '@material-ui/core';
+import { TableCell, TableRow, Typography, TextField, Box } from '@material-ui/core';
 
 const useStyles = makeStyles({
     green: {
@@ -154,15 +155,11 @@ const ItemProfile = ({ match }) => {
                     />
                 </Box>
                 <Box margin={1}>
-                    <Button
-                        size='small'
-                        variant="contained"
-                        color="secondary"
-                        endIcon={<CheckCircleIcon />}
-                        onClick={() => validateDescription()}
-                    >
-                        Save
-                    </Button>
+                    <CustomButton
+                        label='Save'
+                        icon={<CheckCircleIcon />}
+                        click={() => validateDescription()}
+                    />
                 </Box>
             </Box>
             <CustomTable

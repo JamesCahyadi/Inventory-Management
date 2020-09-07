@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import CustomAlert from './subcomponents/CustomAlert';
 import CustomTable from './subcomponents/CustomTable';
 import CustomModal from './subcomponents/CustomModal';
+import CustomButton from './subcomponents/CustomButton';
 import { useHistory } from 'react-router-dom';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
-import { TableCell, TableRow, TextField, Button, Typography, Box } from '@material-ui/core';
+import { TableCell, TableRow, TextField, Typography, Box } from '@material-ui/core';
 
 const AddOrder = ({ location }) => {
     const orderItemIds = location.orderItemIds;
@@ -137,15 +138,11 @@ const AddOrder = ({ location }) => {
                             The items and order quantities will be <b>merged</b> into the existing order.
                         </Typography>
                         <Box display='flex' justifyContent='center'>
-                            <Button
-                                size='small'
-                                variant="contained"
-                                color="secondary"
-                                endIcon={<CheckCircleIcon />}
-                                onClick={() => addOrder()}
-                            >
-                                Confirm
-                            </Button>
+                            <CustomButton
+                                label='Confirm'
+                                icon={<CheckCircleIcon />}
+                                click={() => addOrder()}
+                            />
                         </Box>
                     </>
                 }
@@ -161,15 +158,11 @@ const AddOrder = ({ location }) => {
                     />
                 </Box>
                 <Box margin={1}>
-                    <Button
-                        size='small'
-                        variant="contained"
-                        color="secondary"
-                        endIcon={<AddCircleIcon />}
-                        onClick={() => validateOrder()}
-                    >
-                        Submit Order
-                    </Button>
+                    <CustomButton
+                        label='Submit Order'
+                        icon={<AddCircleIcon />}
+                        click={() => validateOrder()}
+                    />
                 </Box>
             </Box>
             <CustomTable

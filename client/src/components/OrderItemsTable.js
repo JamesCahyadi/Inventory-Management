@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import CustomTable from './subcomponents/CustomTable';
 import CustomAlert from './subcomponents/CustomAlert';
+import CustomButton from './subcomponents/CustomButton';
 import { Link, useHistory } from 'react-router-dom';
-import { TableCell, TableRow, Button, TextField, Box } from '@material-ui/core';
+import { TableCell, TableRow, TextField, Box } from '@material-ui/core';
 import InputIcon from '@material-ui/icons/Input';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 
@@ -137,28 +138,20 @@ const OrderItemsTable = ({ match }) => {
                     />
                 </Box>
                 <Box margin={1}>
-                    <Button
-                        size='small'
-                        variant="contained"
-                        color="secondary"
-                        endIcon={<CheckCircleIcon />}
-                        onClick={() => validateRefNumber()}
-                    >
-                        Save
-                    </Button>
+                    <CustomButton
+                        label='Save'
+                        icon={<CheckCircleIcon />}
+                        click={() => validateRefNumber()}
+                    />
                 </Box>
                 <Box margin={1}>
-                    <Button
-                        size='small'
-                        variant="contained"
-                        color="secondary"
-                        endIcon={<InputIcon />}
-                        onClick={() => receiveAll()}
-                        component={Link}
-                        to='/orders'
-                    >
-                        Receive All
-                    </Button>
+                    <CustomButton
+                        label='Receive All'
+                        icon={<InputIcon />}
+                        click={() => receiveAll()}
+                        type={Link}
+                        link='/orders'
+                    />
                 </Box>
             </Box>
             <CustomTable

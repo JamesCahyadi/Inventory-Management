@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { WinWidthContext, WinWidthProvider } from '../context/WinWidthContext';
+import { WinWidthContext } from '../context/WinWidthContext';
 import { Link } from 'react-router-dom';
 import CustomAlert from './subcomponents/CustomAlert';
 import CustomTable from './subcomponents/CustomTable';
 import CustomModal from './subcomponents/CustomModal';
+import CustomButton from './subcomponents/CustomButton';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import AddBoxIcon from '@material-ui/icons/AddBox';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -12,7 +13,6 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import {
     TableCell,
     TableRow,
-    Button,
     FormControlLabel,
     Checkbox,
     TextField,
@@ -36,7 +36,7 @@ const ItemTable = () => {
     const [priceErr, setPriceErr] = useState(false);
     const [priceHelpertext, setPriceHelperText] = useState('');
     const [searchValue, setSearchValue] = useState('');
-    const [isSmallScreen, setIsSmallScreen] = useContext(WinWidthContext);
+    const isSmallScreen = useContext(WinWidthContext);
 
 
     const validateDescription = () => {
@@ -191,46 +191,34 @@ const ItemTable = () => {
                         }}
                     />
                 </Box>
-                <Box display='flex'>
+                <Box display='flex' margin={1}>
                     <Box marginRight={1}>
-                        <Button
-                            size='small'
-                            variant="contained"
-                            color="secondary"
-                            endIcon={<AddBoxIcon />}
-                            onClick={() => setShowNewModal(true)}
-                        >
-                            New Item
-                        </Button>
+                        <CustomButton
+                            label='New Item'
+                            icon={<AddBoxIcon />}
+                            click={() => setShowNewModal(true)}
+                        />
                     </Box>
                     <Box marginRight={1}>
-                        <Button
-                            size='small'
-                            variant="contained"
-                            color="secondary"
-                            endIcon={<ShoppingCartIcon />}
-                            component={Link}
-                            onClick={() => checkedItems.length > 0 ? setShowOrderAlert(false) : setShowOrderAlert(true)}
-                            to={checkedItems.length > 0 ?
+                        <CustomButton
+                            label='New Order'
+                            icon={<ShoppingCartIcon />}
+                            click={() => checkedItems.length > 0 ? setShowOrderAlert(false) : setShowOrderAlert(true)}
+                            type={Link}
+                            link={checkedItems.length > 0 ?
                                 {
                                     pathname: '/add-order',
                                     orderItemIds: checkedItems
                                 }
                                 : '#'}
-                        >
-                            New Order
-                        </Button>
+                        />
                     </Box>
                     <Box marginRight={1}>
-                        <Button
-                            size='small'
-                            variant="contained"
-                            color="secondary"
-                            endIcon={<DeleteIcon />}
-                            onClick={() => checkedItems.length > 0 ? (setShowDeleteAlert(false), setShowDeleteModal(true)) : setShowDeleteAlert(true)}
-                        >
-                            Delete Items
-                        </Button>
+                        <CustomButton
+                            label='Delete Items'
+                            icon={<DeleteIcon />}
+                            click={() => checkedItems.length > 0 ? (setShowDeleteAlert(false), setShowDeleteModal(true)) : setShowDeleteAlert(true)}
+                        />
                     </Box>
                 </Box>
             </Box>
@@ -258,15 +246,11 @@ const ItemTable = () => {
                                 helperText={priceHelpertext}
                             />
                             <Box marginTop={2}>
-                                <Button
-                                    size='small'
-                                    variant="contained"
-                                    color="secondary"
-                                    endIcon={<CheckCircleIcon />}
-                                    onClick={() => validateDescription()}
-                                >
-                                    Add Item
-                                </Button>
+                                <CustomButton
+                                    label='Add Item'
+                                    icon={<CheckCircleIcon />}
+                                    click={() => validateDescription()}
+                                />
                             </Box>
                         </Box>
                     </>
@@ -285,15 +269,11 @@ const ItemTable = () => {
                             These items will also be removed from all orders.
                             This action cannot be undone.
                         </Typography>
-                        <Button
-                            size='small'
-                            variant="contained"
-                            color="secondary"
-                            endIcon={<CheckCircleIcon />}
-                            onClick={() => deleteItems()}
-                        >
-                            Confirm
-                        </Button>
+                        <CustomButton
+                            label='Confirm'
+                            icon={<CheckCircleIcon />}
+                            click={() => deleteItems()}
+                        />
                     </>
                 }
             />

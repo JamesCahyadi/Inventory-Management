@@ -26,7 +26,7 @@ export const WinWidthProvider = ({ children }) => {
     }, [width]);
 
     return (
-        <WinWidthContext.Provider value={[isSmallScreen, setIsSmallScreen]}>
+        <WinWidthContext.Provider value={isSmallScreen}>
             {children}
         </WinWidthContext.Provider>
     )
