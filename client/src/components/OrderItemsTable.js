@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import CustomTable from './subcomponents/CustomTable';
 import CustomAlert from './subcomponents/CustomAlert';
 import CustomButton from './subcomponents/CustomButton';
@@ -6,6 +6,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { TableCell, TableRow, TextField, Box } from '@material-ui/core';
 import InputIcon from '@material-ui/icons/Input';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import { WinWidthContext } from '../context/WinWidthContext';
 
 const OrderItemsTable = ({ match }) => {
     const orderId = match.params.id;
@@ -16,8 +17,9 @@ const OrderItemsTable = ({ match }) => {
     const [refNumberErr, setRefNumberErr] = useState(false);
     const [refNumberHelperText, setRefNumberHelperText] = useState('');
     const [orders, setOrders] = useState([]);
-    const history = useHistory();
     const headers = ['Item', 'Unit Price', 'Qty Received', 'Qty Ordered'];
+    const history = useHistory();
+    const isSmallScreen = useContext(WinWidthContext);
 
     const getOrderItems = async () => {
         try {
@@ -129,7 +131,7 @@ const OrderItemsTable = ({ match }) => {
                 <Box margin={1}>
                     <TextField
                         required
-                        label="Order Ref Number"
+                        label="Ref Number"
                         placeholder={initialRefNumber}
                         value={refNumber || ''}
                         onChange={e => setRefNumber(e.target.value)}
@@ -168,6 +170,7 @@ const OrderItemsTable = ({ match }) => {
                         </TableCell>
                         <TableCell>
                             <TextField
+                                fullWidth={isSmallScreen ? true : false}
                                 type="number"
                                 placeholder={orderItem.qty_received.toString()}
                                 onBlur={e => updateQtyReceived(orderItem.item_id, e.target.value)}
