@@ -29,7 +29,6 @@ const ItemProfile = ({ match }) => {
     let history = useHistory();
     const headers = ['Item In Orders:', 'Item Qty Received', 'Item Qty Ordered', 'Item Status'];
 
-
     const getItems = async () => {
         try {
             const response = await fetch(`/items`);

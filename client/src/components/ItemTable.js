@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { WinWidthContext, WinWidthProvider } from '../context/WinWidthContext';
+import { Link } from 'react-router-dom';
 import CustomAlert from './subcomponents/CustomAlert';
 import CustomTable from './subcomponents/CustomTable';
 import CustomModal from './subcomponents/CustomModal';
-import { Link } from 'react-router-dom';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import AddBoxIcon from '@material-ui/icons/AddBox';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -35,6 +36,7 @@ const ItemTable = () => {
     const [priceErr, setPriceErr] = useState(false);
     const [priceHelpertext, setPriceHelperText] = useState('');
     const [searchValue, setSearchValue] = useState('');
+    const [isSmallScreen, setIsSmallScreen] = useContext(WinWidthContext);
 
 
     const validateDescription = () => {
@@ -174,7 +176,7 @@ const ItemTable = () => {
                 close={() => setShowDeleteAlert(false)}
                 description=' You must select at least one item to delete!'
             />
-            <Box display='flex' justifyContent='space-between' alignItems='center'>
+            <Box display='flex' justifyContent='space-between' alignItems='center' flexDirection={isSmallScreen ? 'column' : 'row'}>
                 <Box margin={1}>
                     <TextField
                         label="Search for an item"

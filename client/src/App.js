@@ -7,10 +7,11 @@ import OrderTable from './components/OrderTable';
 import OrderItemsTable from './components/OrderItemsTable';
 import AddOrder from './components/AddOrder';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
+import { WinWidthProvider } from './context/WinWidthContext';
 
 function App() {
   return (
-    <>
+    <WinWidthProvider>
       <Router>
         <Navbar />
         <Switch>
@@ -24,7 +25,7 @@ function App() {
           <Route exact path='/item/:id' component={ItemProfile} />
         </Switch>
       </Router>
-    </>
+    </WinWidthProvider>
   );
 }
 
