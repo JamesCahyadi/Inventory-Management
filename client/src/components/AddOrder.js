@@ -138,6 +138,7 @@ const AddOrder = ({ location }) => {
                         </Typography>
                         <Box display='flex' justifyContent='center'>
                             <Button
+                                size='small'
                                 variant="contained"
                                 color="secondary"
                                 endIcon={<CheckCircleIcon />}
@@ -161,6 +162,7 @@ const AddOrder = ({ location }) => {
                 </Box>
                 <Box margin={1}>
                     <Button
+                        size='small'
                         variant="contained"
                         color="secondary"
                         endIcon={<AddCircleIcon />}

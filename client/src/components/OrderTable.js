@@ -106,6 +106,7 @@ const OrderTable = () => {
                             This action cannot be undone.
                         </Typography>
                         <Button
+                            size='small'
                             variant="contained"
                             color="secondary"
                             endIcon={<CheckCircleIcon />}
@@ -133,6 +134,7 @@ const OrderTable = () => {
                 </Box>
                 <Box margin={1}>
                     <Button
+                        size='small'
                         variant="contained"
                         color="secondary"
                         endIcon={<DeleteIcon />}

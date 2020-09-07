@@ -155,6 +155,7 @@ const ItemProfile = ({ match }) => {
                 </Box>
                 <Box margin={1}>
                     <Button
+                        size='small'
                         variant="contained"
                         color="secondary"
                         endIcon={<CheckCircleIcon />}

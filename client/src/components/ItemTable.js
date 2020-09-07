@@ -194,6 +194,7 @@ const ItemTable = () => {
                 <Box display='flex'>
                     <Box marginRight={1}>
                         <Button
+                            size='small'
                             variant="contained"
                             color="secondary"
                             endIcon={<AddBoxIcon />}
@@ -204,6 +205,7 @@ const ItemTable = () => {
                     </Box>
                     <Box marginRight={1}>
                         <Button
+                            size='small'
                             variant="contained"
                             color="secondary"
                             endIcon={<ShoppingCartIcon />}
@@ -221,6 +223,7 @@ const ItemTable = () => {
                     </Box>
                     <Box marginRight={1}>
                         <Button
+                            size='small'
                             variant="contained"
                             color="secondary"
                             endIcon={<DeleteIcon />}
@@ -236,32 +239,35 @@ const ItemTable = () => {
                 close={() => setShowNewModal(false)}
                 body={
                     <>
-                        <Typography variant='h5' align='center'>
-                            <b>Item Information</b>
-                        </Typography>
-                        <TextField
-                            required
-                            label="Item Name"
-                            onChange={e => setDescription(e.target.value)}
-                            error={descriptionErr}
-                            helperText={descriptionHelperText}
-                        />
-                        <TextField
-                            required
-                            label="Price"
-                            onChange={e => setPrice(e.target.value)}
-                            error={priceErr}
-                            helperText={priceHelpertext}
-                        />
-                        <Box marginTop={2}>
-                            <Button
-                                variant="contained"
-                                color="secondary"
-                                endIcon={<CheckCircleIcon />}
-                                onClick={() => validateDescription()}
-                            >
-                                Add Item
-                            </Button>
+                        <Box paddingLeft={3} paddingRight={3} display='flex' flexDirection='column'>
+                            <Typography variant='h5' align='center'>
+                                <b>Item Information</b>
+                            </Typography>
+                            <TextField
+                                required
+                                label="Item Name"
+                                onChange={e => setDescription(e.target.value)}
+                                error={descriptionErr}
+                                helperText={descriptionHelperText}
+                            />
+                            <TextField
+                                required
+                                label="Price"
+                                onChange={e => setPrice(e.target.value)}
+                                error={priceErr}
+                                helperText={priceHelpertext}
+                            />
+                            <Box marginTop={2}>
+                                <Button
+                                    size='small'
+                                    variant="contained"
+                                    color="secondary"
+                                    endIcon={<CheckCircleIcon />}
+                                    onClick={() => validateDescription()}
+                                >
+                                    Add Item
+                                </Button>
+                            </Box>
                         </Box>
                     </>
                 }
@@ -280,6 +286,7 @@ const ItemTable = () => {
                             This action cannot be undone.
                         </Typography>
                         <Button
+                            size='small'
                             variant="contained"
                             color="secondary"
                             endIcon={<CheckCircleIcon />}
