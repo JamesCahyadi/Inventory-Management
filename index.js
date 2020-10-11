@@ -135,8 +135,8 @@ app.get('/orders', async (req, res) => {
         let getOrdersQuery;
         if (ref) {
             getOrdersQuery = `
-            select o.order_id, o.ref_number, sum(oi.qty_received) as qty_received, sum(oi.qty_ordered) as qty_ordered
-                sum(oi.qty_ordered * i.price) as order_value, count(i.item_id) as total_items
+            select o.order_id, o.ref_number, sum(coalesce(oi.qty_received, 0)) as qty_received,sum(coalesce(oi.qty_ordered, 0)) as qty_ordered,
+                sum(coalesce(oi.qty_ordered, 0) * i.price) as order_value, count(i.item_id) as total_items
             from orders_item oi
             inner join orders o on
                 o.order_id = oi.order_id
@@ -147,8 +147,8 @@ app.get('/orders', async (req, res) => {
             `
         } else {
             getOrdersQuery = `
-            select o.order_id, o.ref_number, sum(oi.qty_received) as qty_received, sum(oi.qty_ordered) as qty_ordered,
-                sum(oi.qty_ordered * i.price) as order_value, count(i.item_id) as total_items
+            select o.order_id, o.ref_number, sum(coalesce(oi.qty_received, 0)) as qty_received,sum(coalesce(oi.qty_ordered, 0)) as qty_ordered,
+                sum(coalesce(oi.qty_ordered, 0) * i.price) as order_value, count(i.item_id) as total_items
             from orders_item oi
             inner join orders o on
                 o.order_id = oi.order_id

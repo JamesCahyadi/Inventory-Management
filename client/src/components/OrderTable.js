@@ -31,6 +31,7 @@ const OrderTable = () => {
     const headers = ['Order Ref Number', 'Qty Received', 'Qty Ordered', 'Total Items', 'Order Value', 'Status'];
 
     const getOrders = async (order = '') => {
+        console.log(order);
         try {
             let response;
             if (!order) {
