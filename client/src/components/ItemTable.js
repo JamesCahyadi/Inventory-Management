@@ -44,7 +44,7 @@ const ItemTable = () => {
             setDescriptionErr(true);
             setDescriptionHelperText('Required field');
             return;
-        } else if (!(description.trim().length > 0) && !(description.trim().length <= 50)) {
+        } else if (!(description.length > 0) && !(description.length <= 50)) {
             setDescriptionErr(true);
             setDescriptionHelperText('Must be 1-50 characters long');
             return;
@@ -61,8 +61,6 @@ const ItemTable = () => {
                 }
             }
         }
-        // remove trailing whitespace
-        setDescription(description.trim());
         setDescriptionErr(false);
         setDescriptionHelperText('');
         validatePrice();
@@ -232,7 +230,7 @@ const ItemTable = () => {
                             <TextField
                                 required
                                 label="Item Name"
-                                onChange={e => setDescription(e.target.value)}
+                                onChange={e => setDescription(e.target.value.trim())}
                                 error={descriptionErr}
                                 helperText={descriptionHelperText}
                             />

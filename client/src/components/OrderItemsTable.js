@@ -71,7 +71,7 @@ const OrderItemsTable = ({ match }) => {
             setRefNumberErr(true);
             setRefNumberHelperText('Required Field');
             return;
-        } else if (!(refNumber.trim().length > 0) && !(refNumber.trim().length <= 50)) {
+        } else if (!(refNumber.length > 0) && !(refNumber.length <= 50)) {
             setRefNumberErr(true);
             setRefNumberHelperText('Must be 1-50 characters long');
             return;
@@ -88,7 +88,6 @@ const OrderItemsTable = ({ match }) => {
                 }
             }
         }
-        setRefNumber(refNumber.trim());
         setRefNumberErr(false);
         setRefNumberHelperText('');
         updateRefNumber();
@@ -137,7 +136,7 @@ const OrderItemsTable = ({ match }) => {
                         label="Ref Number"
                         placeholder={initialRefNumber}
                         value={refNumber || ''}
-                        onChange={e => setRefNumber(e.target.value)}
+                        onChange={e => setRefNumber(e.target.value.trim())}
                         error={refNumberErr}
                         helperText={refNumberHelperText}
                     />
