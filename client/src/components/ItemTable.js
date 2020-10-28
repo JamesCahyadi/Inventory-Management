@@ -44,27 +44,25 @@ const ItemTable = () => {
             setDescriptionErr(true);
             setDescriptionHelperText('Required field');
             return;
-        }
-
-        if (!(description.length > 0) && !(description.length <= 50)) {
+        } else if (!(description.trim().length > 0) && !(description.trim().length <= 50)) {
             setDescriptionErr(true);
             setDescriptionHelperText('Must be 1-50 characters long');
             return;
-        }
-
-        if (!(/^[a-zA-Z\s\d]*$/).test(description)) {
+        } else if (!(/^[a-zA-Z\s\d]*$/).test(description)) {
             setDescriptionErr(true);
             setDescriptionHelperText('Special characters are not allowed');
             return;
-        }
-
-        for (let item of items) {
-            if (item.description === description) {
-                setDescriptionErr(true);
-                setDescriptionHelperText('Item already exists');
-                return;
+        } else {
+            for (let item of items) {
+                if (item.description === description) {
+                    setDescriptionErr(true);
+                    setDescriptionHelperText('Item already exists');
+                    return;
+                }
             }
         }
+        // remove trailing whitespace
+        setDescription(description.trim());
         setDescriptionErr(false);
         setDescriptionHelperText('');
         validatePrice();

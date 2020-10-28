@@ -71,21 +71,24 @@ const OrderItemsTable = ({ match }) => {
             setRefNumberErr(true);
             setRefNumberHelperText('Required Field');
             return;
-        }
-        if (!(/^[a-zA-Z\s\d]*$/).test(refNumber)) {
+        } else if (!(refNumber.trim().length > 0) && !(refNumber.trim().length <= 50)) {
+            setRefNumberErr(true);
+            setRefNumberHelperText('Must be 1-50 characters long');
+            return;
+        } else if (!(/^[a-zA-Z\s\d]*$/).test(refNumber)) {
             setRefNumberErr(true);
             setRefNumberHelperText('Only letters and numbers allowed');
             return;
-        }
-
-        for (let order of orders) {
-            if (refNumber !== initialRefNumber && order.ref_number === refNumber) {
-                setRefNumberErr(true);
-                setRefNumberHelperText('Order already exists');
-                return;
+        } else {
+            for (let order of orders) {
+                if (refNumber !== initialRefNumber && order.ref_number === refNumber) {
+                    setRefNumberErr(true);
+                    setRefNumberHelperText('Order already exists');
+                    return;
+                }
             }
         }
-
+        setRefNumber(refNumber.trim());
         setRefNumberErr(false);
         setRefNumberHelperText('');
         updateRefNumber();
