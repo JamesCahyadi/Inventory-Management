@@ -10,4 +10,4 @@
 ### To do
 * Table pagination
 * Sorting features
-* Add athletes/transacations
+* Add athletes/transactions
