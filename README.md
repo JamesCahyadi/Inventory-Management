@@ -1,5 +1,4 @@
 # Inventory-Management
-An inventory management website create using the PERN stack!
 
 ### Features
 * Developed a RESTful API to perform CRUD operations on item and order information
